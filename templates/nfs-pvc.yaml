@@ -1,0 +1,16 @@
+{{- if .Values.pvc.enabled }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "thumbor.fullname" . }}-nfs-claim
+  labels:
+    {{- include "thumbor.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    {{- toYaml .Values.pvc.accessModes | nindent 4 }}
+  storageClassName: {{ .Values.pvc.storageClassName }}
+  resources:
+    {{- toYaml .Values.pvc.claim.resources | nindent 4 }}
+  volumeName: {{ include "thumbor.fullname" . }}-nfs
+{{- endif }}
