@@ -1,0 +1,21 @@
+{{- if .Values.pvc.enabled }}
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ include "thumbor.fullname" . }}-nfs
+  labels:
+    {{- include "thumbor.labels" . | nindent 4 }}
+spec:
+  capacity:
+    storage: {{ .Values.pvc.storageSize }}
+  accessModes:
+    {{- toYaml .Values.pvc.accessModes | nindent 4 }}
+  nfs:
+    server: {{ .Values.pvc.nfsServerHost }}
+    path: {{ .Values.pvc.nfsPath }}
+  {{- if .Values.pvc.mountOptions }}
+  mountOptions:
+    {{- toYaml .Values.pvc.mountOptions | nindent 4 }}
+  {{- endif }}
+{{- endif }}
