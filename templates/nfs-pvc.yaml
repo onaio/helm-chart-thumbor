@@ -13,4 +13,4 @@ spec:
   resources:
     {{- toYaml .Values.pvc.claim.resources | nindent 4 }}
   volumeName: {{ include "thumbor.fullname" . }}-nfs
-{{- endif }}
+{{- end }}
