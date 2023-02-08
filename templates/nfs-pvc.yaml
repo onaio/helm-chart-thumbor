@@ -1,9 +1,9 @@
-{{- if .Values.pvc.enabled }}
+{{- if and (.Values.pvc.enabled) (eq .Values.kind "Deployment") }}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ include "thumbor.fullname" . }}-nfs-claim
+  name: {{ include "thumbor.fullname" . }}-data
   labels:
     {{- include "thumbor.labels" . | nindent 4 }}
 spec:
@@ -12,5 +12,5 @@ spec:
   storageClassName: {{ .Values.pvc.storageClassName }}
   resources:
     {{- toYaml .Values.pvc.claim.resources | nindent 4 }}
-  volumeName: {{ include "thumbor.fullname" . }}-nfs
+  volumeName: {{ include "thumbor.fullname" . }}-data
 {{- end }}

@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: {{ .Values.kind }}
 metadata:
   name: {{ include "thumbor.fullname" . }}
   labels:
@@ -11,6 +11,21 @@ spec:
   selector:
     matchLabels:
       {{- include "thumbor.selectorLabels" . | nindent 6 }}
+  {{- if (eq .Values.kind "StatefulSet" }}
+  serviceName: {{ include "thumbor.fullname" . }}
+  volumeClaimTemplates:
+    - metadata:
+        name: {{ include "thumbor.fullname" .}}-data
+        labels:
+          {{- include "thumbor.labels" . | nindent 8 }}
+      spec:
+        accessModes:
+          {{- toYaml .Values.pvc.accessModes | nindent 8 }}
+        storageClassName: {{ .Values.pvc.storageClassName }}
+        resources:
+          {{- toYaml .Values.pvc.claim.resources | nindent 8 }}
+        volumeName: {{ include "thumbor.fullname" . }}-data
+  {{- end }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -29,9 +44,14 @@ spec:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       {{- if .Values.pvc.enabled }}
       volumes:
-        - name: app-nfs
+        - name: thumbor-data
           persistentVolumeClaim:
-            claimName: {{ include "thumbor.fullname" . }}-nfs-claim
+            claimName: {{ include "thumbor.fullname" . }}-data
+      {{- else if .Values.pvc.existingClaim }}
+      volumes:
+        - name: thumbor-data
+          persistentVolumeClaim:
+            claimName: {{ printf "%s" (tpl .Values.pvc.existingClaim .) }}
       {{- end }}
       containers:
         - name: {{ .Chart.Name }}
@@ -47,9 +67,9 @@ spec:
               protocol: TCP
           {{- if .Values.pvc.enabled }}
           volumeMounts:
-            - name: app-pv
+            - name: thumbor-data
               mountPath: {{ .Values.pvc.mountPath }}
-          {{- end }}
+          {{ end }}
           livenessProbe:
             {{- toYaml .Values.livenessProbe | nindent 12 }}
           readinessProbe:
