@@ -25,6 +25,10 @@ spec:
         resources:
           {{- toYaml .Values.pvc.claim.resources | nindent 8 }}
         volumeName: {{ include "thumbor.fullname" . }}-data
+        {{- with .Values.pvc.dataSource }}
+        dataSource:
+          {{- toYaml . | nindent 8 }}
+        {{ end }}
   {{- end }}
   template:
     metadata:

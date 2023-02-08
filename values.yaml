@@ -24,6 +24,7 @@ pvc:
     - ReadWriteMany
   mountPath: /srv/thumbor
   existingClaim: ""
+  dataSource: {}
   claim:
     resources:
       requests:
