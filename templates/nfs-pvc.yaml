@@ -12,5 +12,7 @@ spec:
   storageClassName: {{ .Values.pvc.storageClassName }}
   resources:
     {{- toYaml .Values.pvc.claim.resources | nindent 4 }}
-  volumeName: {{ include "thumbor.fullname" . }}-data
+  {{- if .Values.pvc.volumeName }}
+  volumeName: {{ .Values.pvc.volumeName }}
+  {{- end }}
 {{- end }}

@@ -11,20 +11,22 @@ spec:
   selector:
     matchLabels:
       {{- include "thumbor.selectorLabels" . | nindent 6 }}
-  {{- if (eq .Values.kind "StatefulSet" }}
+  {{- if (eq .Values.kind "StatefulSet") }}
   serviceName: {{ include "thumbor.fullname" . }}
   volumeClaimTemplates:
     - metadata:
         name: {{ include "thumbor.fullname" .}}-data
         labels:
-          {{- include "thumbor.labels" . | nindent 8 }}
+          {{- include "thumbor.labels" . | nindent 10 }}
       spec:
         accessModes:
-          {{- toYaml .Values.pvc.accessModes | nindent 8 }}
+          {{- toYaml .Values.pvc.accessModes | nindent 10 }}
         storageClassName: {{ .Values.pvc.storageClassName }}
         resources:
-          {{- toYaml .Values.pvc.claim.resources | nindent 8 }}
-        volumeName: {{ include "thumbor.fullname" . }}-data
+          {{- toYaml .Values.pvc.claim.resources | nindent 10 }}
+        {{- if .Values.pvc.volumeName }}
+        volumeName: {{ .Values.pvc.volumeName }}
+        {{- end }}
         {{- with .Values.pvc.dataSource }}
         dataSource:
           {{- toYaml . | nindent 8 }}

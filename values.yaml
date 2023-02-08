@@ -20,6 +20,7 @@ fullnameOverride: ""
 pvc:
   enabled: false
   storageClassName: ""
+  volumeName: ""
   accessModes:
     - ReadWriteMany
   mountPath: /srv/thumbor
