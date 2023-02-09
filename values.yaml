@@ -4,6 +4,9 @@
 
 replicaCount: 1
 
+# Application resource kind either Deployment or StatefulSet
+kind: Deployment
+
 image:
   repository: minimalcompact/thumbor
   pullPolicy: IfNotPresent
@@ -17,9 +20,12 @@ fullnameOverride: ""
 pvc:
   enabled: false
   storageClassName: ""
+  volumeName: ""
   accessModes:
     - ReadWriteMany
-  mountPath: /srv/onadata/media
+  mountPath: /srv/thumbor
+  existingClaim: ""
+  dataSource: {}
   claim:
     resources:
       requests:
